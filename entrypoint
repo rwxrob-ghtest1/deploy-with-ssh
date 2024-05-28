@@ -1,6 +1,35 @@
 #!/bin/sh -l
+set -e
 
-echo "Hello $USER"
-time=$(date)
-echo "time=$time" >> $GITHUB_OUTPUT
+# Note that this script is designed to be run from an ephemeral
+# container that will discard any changes immediately upon completion of
+# the workflow action. Therefore, normal cleanup and other checks (like
+# hostkey) are not performed.
 
+## DO NOT read these from user input. Instead, hard-code to your target.
+user='rwxrob-ghtest1'
+host='localhost'
+dir='.'
+cmd='ls'
+hostkey='localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEg8mclfbHmyvmT9PXc/X9Lap35E0eCdciSqvfOq2jJ7ENSUhlLypmQyRic6uiHRpKq29Ty2X2yalfK40gV8Cfo=
+'
+
+if [ -z "$SSHKEY" ];then
+	echo "missing SSHKEY private key" >&2
+	exit 1
+fi
+echo "$SSHKEY" > sshkey.priv
+chmod 0600 sshkey.priv
+
+echo "$hostkey" >> ~/.ssh/known_hosts
+
+if [ ! -d files ]; then
+	echo "missing files directory" >&2
+	exit 1
+fi
+tstamp=$(date -u +%Y%m%d%H%M%S)
+tarball="files-$tstamp.tar.gz"
+
+tar czvf "$tarball" files
+scp -i sshkey.priv "$tarball" "$user@$host:$dir"
+ssh -i sshkey.priv "$user@$host" "$cmd"
