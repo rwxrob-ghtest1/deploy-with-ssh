@@ -58,6 +58,12 @@ mkdir files
 touch files/{foo,bar}
 ```
 
+Create the `~/.local/var/incoming` directory to receive the incoming tar balls.
+
+```sh
+mkdir -p ~/.local/var/incoming
+```
+
 Then simply run the `entrypoint` script like any other making sure to give it the same identity key that has been added to `authorized_keys` above. Be sure to use the private SSH key file and not the public key.
 
 ```
