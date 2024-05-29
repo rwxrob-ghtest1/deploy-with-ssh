@@ -10,7 +10,7 @@ set -e
 user='rwxrob-ghtest1'
 host='localhost'
 dir='.'
-cmd='ls'
+cmd='.local/bin/apply-tar'
 hostkey='localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEg8mclfbHmyvmT9PXc/X9Lap35E0eCdciSqvfOq2jJ7ENSUhlLypmQyRic6uiHRpKq29Ty2X2yalfK40gV8Cfo=
 '
 
