@@ -9,7 +9,7 @@ set -e
 ## DO NOT read these from user input. Instead, hard-code to your target.
 user='rwxrob-ghtest1'
 host='localhost'
-dir='.local/var/incoming'
+incoming='.local/var/incoming'
 cmd='.local/bin/apply-tar'
 hostkey='localhost ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEg8mclfbHmyvmT9PXc/X9Lap35E0eCdciSqvfOq2jJ7ENSUhlLypmQyRic6uiHRpKq29Ty2X2yalfK40gV8Cfo=
 '
@@ -31,5 +31,10 @@ tstamp=$(date -u +%Y%m%d%H%M%S)
 tarball="files-$tstamp.tar.gz"
 
 tar czvf "$tarball" files
-scp -i sshkey.priv "$tarball" "$user@$host:$dir/$tarball"
-ssh -i sshkey.priv "$user@$host" "$cmd $dir/$tarball"
+scp -i sshkey.priv "$tarball" "$user@$host:$incoming/$tarball"
+
+if [ -n "$cmd" ]; then
+	# deliberately does not include $incoming to force consistent values in
+	# action and command, final version usually calls sudo
+	ssh -i sshkey.priv "$user@$host" "$cmd $tarball"
+fi
