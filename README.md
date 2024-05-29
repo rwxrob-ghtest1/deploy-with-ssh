@@ -61,5 +61,5 @@ touch files/{foo,bar}
 Then simply run the `entrypoint` script like any other making sure to give it the same identity key that has been added to `authorized_keys` above. Be sure to use the private SSH key file and not the public key.
 
 ```
-SSHKEY="$(cat ~/.ssh/id_ed25519)" ./entrypoint
+SSHKEY="$(< ~/.ssh/id_ed25519)" ./entrypoint
 ```
