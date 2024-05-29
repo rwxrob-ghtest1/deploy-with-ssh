@@ -1,0 +1,36 @@
+#!/usr/bin/bash
+set -e
+
+# change to actual target values in final version
+incoming=~/.local/var/incoming
+destdir=~/.local/bin
+owner="$(id -u)"
+group="$(id -g)"
+tarball="$1"
+tarpath="$incoming/$tarball"
+
+if [[ ! -d "$destdir" ]];then
+	echo "failed to find destination directory: $destdir" >&2
+	exit 1
+fi
+
+if [[ ! -d "$incoming" ]];then
+	echo "failed to find incoming directory: $incoming" >&2
+	exit 1
+fi
+
+if [[ -x "$tarball" ]];then
+	echo "tarball argument (first and only) apparently empty" >&2
+	exit 1
+fi
+
+if [[ ! -f "$tarpath" ]];then
+	echo "incoming tarball does not exist: $tarpath" >&2
+	exit 1
+fi
+
+staged=$(mktemp -d)
+tar -C "$staged" -xvf "$tarpath"
+chown -R "$owner:$group" "$staged"
+tar -C "$staged/files" -cvf - "." | tar -C "$destdir" -xvf -
+[[ -d $staged ]] && rm -rf  "$staged"
